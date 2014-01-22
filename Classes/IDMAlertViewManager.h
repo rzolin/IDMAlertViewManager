@@ -270,6 +270,13 @@ typedef NS_ENUM(NSInteger, IDMAlertError)
  */
 + (BOOL)showAlertView:(UIAlertView *)alertView priority:(IDMAlertPriority)priority;
 
+
++ (BOOL)showAlertForError:(NSError *)error
+                 priority:(IDMAlertPriority)priority
+                  success:(IDMAlertViewSuccessBlock)successBlock
+                  failure:(IDMAlertViewFailureBlock)failureBlock;
+
+
 #pragma mark - Dismissing Alerts
 /** @name Dismissing Alerts */
 

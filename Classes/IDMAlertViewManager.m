@@ -14,9 +14,10 @@
 #define kNIL_OUTPUTS_MESSAGE    @"Message and Title cannot be nil"
 #define kFAILED_DISMISS_MESSAGE	@"Programmatically Dismissed Alert"
 
+#import <WCAlertView/WCAlertView.h>
 #import "IDMAlertViewManager.h"
 
-#import "UIAlertView+ProxyDelegate.h"
+#import "WCAlertView+ProxyDelegate.h"
 
 /**
  *  The singleton's shared instance.
@@ -50,7 +51,7 @@ static IDMAlertViewManager *_sharedInstance;
 /**
  *  The visible alert view.
  */
-@property (nonatomic, strong) UIAlertView *alertView;
+@property (nonatomic, strong) WCAlertView *alertView;
 
 #pragma mark - Private Methods Declaration
 
@@ -100,7 +101,7 @@ static IDMAlertViewManager *_sharedInstance;
 	if (self = [super init])
 	{
 		[self clearVolatileProperties];
-		self.defaultDismissalButtonText = @"OK";
+		self.defaultDismissalButtonText = NSLocalizedString(@"OK", @"OK");
 	}
 	
 	return self;
@@ -204,7 +205,7 @@ static IDMAlertViewManager *_sharedInstance;
                                            buttons:nil];
 }
 
-// Shows an alert with the given `title`, `message`, `priority` and `buttons` for dismissing the UIAlertView.
+// Shows an alert with the given `title`, `message`, `priority` and `buttons` for dismissing the WCAlertView.
 + (BOOL)showAlertWithTitle:(NSString *)title
 				   message:(NSString *)message
 				  priority:(IDMAlertPriority)priority
@@ -223,7 +224,7 @@ static IDMAlertViewManager *_sharedInstance;
 		return NO;
     }
     
-    UIAlertView *alertView  = [UIAlertView new];
+    WCAlertView *alertView  = [WCAlertView new];
 	alertView.title         = title;
 	alertView.message       = message;
     alertView.successBlock  = successBlock;
@@ -244,7 +245,7 @@ static IDMAlertViewManager *_sharedInstance;
 }
 
 //  Shows a custom alert view with the given priority.
-+ (BOOL)showAlertView:(UIAlertView *)alertView priority:(IDMAlertPriority)priority
++ (BOOL)showAlertView:(WCAlertView *)alertView priority:(IDMAlertPriority)priority
 {
     IDMAlertViewManager *avm    = [IDMAlertViewManager sharedInstance];
     alertView.priority          = priority;
@@ -282,9 +283,24 @@ static IDMAlertViewManager *_sharedInstance;
     return YES;
 }
 
++ (BOOL)showAlertForError:(NSError *)error
+                 priority:(IDMAlertPriority)priority
+                  success:(IDMAlertViewSuccessBlock)successBlock
+                  failure:(IDMAlertViewFailureBlock)failureBlock
+{
+    NSString *title = NSLocalizedString(@"Error", @"Error");
+    NSString *message = error.localizedDescription;
+    return [IDMAlertViewManager showAlertWithTitle:title
+                                           message:message
+                                          priority:IDMAlertPriorityMedium
+                                           success:successBlock
+                                           failure:failureBlock];
+}
+
+
 #pragma mark - Dismissing Alerts
 
-// Dismiss the visible UIAlertView, if any.
+// Dismiss the visible WCAlertView, if any.
 + (void)dismiss:(BOOL)animated
 {
 	IDMAlertViewManager *avm = [IDMAlertViewManager sharedInstance];
@@ -293,9 +309,9 @@ static IDMAlertViewManager *_sharedInstance;
 	[avm clearVolatileProperties];
 }
 
-#pragma mark - UIAlertViewDelegate
+#pragma mark - WCAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(WCAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
 	[self clearVolatileProperties];
     
@@ -310,7 +326,7 @@ static IDMAlertViewManager *_sharedInstance;
     }
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)alertView:(WCAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
 	[self clearVolatileProperties];
     
@@ -326,7 +342,7 @@ static IDMAlertViewManager *_sharedInstance;
     }
 }
 
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)alertView:(WCAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (alertView.originalDelegate && [alertView.originalDelegate respondsToSelector:_cmd])
     {
@@ -334,7 +350,7 @@ static IDMAlertViewManager *_sharedInstance;
     }
 }
 
-- (void)alertViewCancel:(UIAlertView *)alertView
+- (void)alertViewCancel:(WCAlertView *)alertView
 {
     if (alertView.originalDelegate && [alertView.originalDelegate respondsToSelector:_cmd])
     {
@@ -342,7 +358,7 @@ static IDMAlertViewManager *_sharedInstance;
     }
 }
 
-- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+- (BOOL)alertViewShouldEnableFirstOtherButton:(WCAlertView *)alertView
 {
     if (alertView.originalDelegate && [alertView.originalDelegate respondsToSelector:_cmd])
     {
@@ -352,7 +368,7 @@ static IDMAlertViewManager *_sharedInstance;
     return YES;
 }
 
-- (void)didPresentAlertView:(UIAlertView *)alertView
+- (void)didPresentAlertView:(WCAlertView *)alertView
 {
     if (alertView.originalDelegate && [alertView.originalDelegate respondsToSelector:_cmd])
     {
@@ -360,7 +376,7 @@ static IDMAlertViewManager *_sharedInstance;
     }
 }
 
-- (void)willPresentAlertView:(UIAlertView *)alertView
+- (void)willPresentAlertView:(WCAlertView *)alertView
 {
     if (alertView.originalDelegate && [alertView.originalDelegate respondsToSelector:_cmd])
     {
